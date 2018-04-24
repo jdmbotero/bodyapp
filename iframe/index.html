@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>iFrame</title>
+
+	<style type="text/css">
+		.container {
+			text-align: center;
+		}
+		.controls {
+			margin-bottom: 10px;
+		}
+		iframe {
+			max-width: 800px;
+			width: 100%;
+			height: 600px;
+			margin: 0 auto;
+		}
+	</style>
+
+	<script type="text/javascript">
+		var morphConfig = {};
+
+		var bindEvent = function(element, eventName, eventHandler) {
+            if (element.addEventListener){
+                element.addEventListener(eventName, eventHandler, false);
+            } else if (element.attachEvent) {
+                element.attachEvent('on' + eventName, eventHandler);
+            }
+        }
+
+        var sendData = function() {
+        	morphConfig['Height'] = document.getElementById('inputHeight').value;
+
+            document.getElementById("iframe").contentWindow.postMessage(morphConfig, '*');
+        };
+
+        bindEvent(window, 'message', function (e) {
+            console.log('parent: ', e.data);
+            morphConfig = e.data;
+
+            if(morphConfig.hasOwnProperty('Height'))
+            	document.getElementById('inputHeight').value = morphConfig['Height'];
+        });
+	</script>
+
+</head>
+<body>
+	<div class="controls">
+		<label>Height: </label><input type="text" id="inputHeight" name="inputHeight"/>
+		<button onclick="sendData()">Update</button>
+	</div>
+
+	<div class="container">
+		<iframe id="iframe" src="../bodyapps-viz/index.html"></iframe>
+	</div>
+</body>
+</html>
